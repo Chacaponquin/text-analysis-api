@@ -1,0 +1,2 @@
+class FetchDocsError(Exception):
+    pass
