@@ -1,6 +1,7 @@
-from fastapi import HTTPException, APIRouter
+from fastapi import HTTPException, APIRouter, Body, Request
 from .services import DocsServices
 from .exceptions import FetchDocsError
+from .dto import FindDocDTO
 
 
 docs_router = APIRouter()
@@ -18,11 +19,11 @@ def get_docs():
         raise HTTPException(status_code=500)
 
 
-@docs_router.get('/search/{doc_search}')
-def search_similar_documents(search_doc: str):
+@docs_router.post('/find')
+async def search_similar_documents(params: FindDocDTO):
     try:
         docs_services = DocsServices()
-        docs = docs_services.search_similar_documents(search_doc)
+        docs = docs_services.search_similar_documents(params)
         return docs
     except FetchDocsError:
         raise HTTPException(status_code=500)

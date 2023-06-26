@@ -1,6 +1,7 @@
 import requests
 import difflib
 from .exceptions import FetchDocsError
+from .dto import FindDocDTO
 
 
 class DocsReporsitory:
@@ -13,13 +14,12 @@ class DocsReporsitory:
 
         return self._map_docs(res.json()['response']['docs'])
 
-    def find_similar_documents(self, search_title: str):
+    def find_similar_documents(self, params: FindDocDTO):
         search_docs = []
         for doc in self.get_all_docs():
-            if difflib.SequenceMatcher(None, search_title, doc['title']).ratio() > 0.7:
+            if difflib.SequenceMatcher(None, params.document_title, doc['title']).ratio() > 0.7:
                 search_docs.append(doc)
         return search_docs
-
 
     def _map_docs(self, docs):
         return_docs = []
