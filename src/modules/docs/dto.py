@@ -5,3 +5,5 @@ class FindDocDTO(BaseModel):
    entities: list[str]
    categories: list[str]
    document_title: str
+   year_init: int
+   year_finish: int
