@@ -1,10 +1,10 @@
-from .repository import DocsReporsitory
+from .repository import DocsRepository
 from .dto import FindDocDTO
 
 
 class DocsServices:
     def __init__(self):
-        self.repository = DocsReporsitory()
+        self.repository = DocsRepository()
 
     def get_all_docs(self):
         return self.repository.get_all_docs()

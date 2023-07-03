@@ -27,5 +27,6 @@ async def search_similar_documents(params: FindDocDTO):
         return docs
     except FetchDocsError:
         raise HTTPException(status_code=500)
-    except Exception:
+    except Exception as error:
+        print(error)
         raise HTTPException(status_code=500)
