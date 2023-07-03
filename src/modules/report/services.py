@@ -7,7 +7,5 @@ class ReportServices:
         self.entity_services = EntityServices()
 
     def get_entity_frequency_data(self, docs_filter: FilterDTO | None = None):
-        return_data: list[dict] = []
-
         all_entities = self.entity_services.get_all_entities(docs_filter)
         return all_entities

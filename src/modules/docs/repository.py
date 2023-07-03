@@ -22,14 +22,19 @@ class DocsRepository:
 
         return self._map_docs(res.json()['response']['docs'])
 
-    def find_similar_documents(self, params: FilterDTO):
-        order_docs = self._filter_docs_by_title(self.get_all_docs(), params.document_title)
-        order_docs = self._filter_docs_by_entities(order_docs, params.entities)
-        order_docs = self._filter_docs_by_categories(order_docs, params.categories)
-        order_docs = self._filter_docs_by_years(order_docs, params.year_init, params.year_finish)
+    def find_similar_documents(self, params: FilterDTO | None = None):
+        all_docs = self.get_all_docs()
 
-        order_docs.sort(key=lambda x: x['suggest'], reverse=True)
-        return list(map(lambda x: x['doc'], order_docs))
+        if params is not None:
+            order_docs = self._filter_docs_by_title(all_docs, params.document_title)
+            order_docs = self._filter_docs_by_entities(order_docs, params.entities)
+            order_docs = self._filter_docs_by_categories(order_docs, params.categories)
+            order_docs = self._filter_docs_by_years(order_docs, params.year_init, params.year_finish)
+
+            order_docs.sort(key=lambda x: x['suggest'], reverse=True)
+            return order_docs
+        else:
+            return list(map(lambda x: {'doc': x, 'suggest': 0.0}, all_docs))
 
     def _filter_docs_by_years(self, docs, year_init: int, year_finish: int):
         filter_docs = []
@@ -43,18 +48,23 @@ class DocsRepository:
         return filter_docs
 
     def _filter_docs_by_categories(self, docs, filter_categories):
+        return_docs = []
+
         for doc in docs:
             count = 0
 
-            for f_ent in filter_categories:
-                if f_ent in doc['doc']['categories']:
+            for f_cat in filter_categories:
+                if f_cat in doc['doc']['categories']:
                     count += 1
 
-            doc['suggest'] = doc['suggest'] + (count * self.CATEGORY_SUGGEST_LEVEL)
+            if count == len(filter_categories):
+                return_docs.append(doc)
 
-        return docs
+        return return_docs
 
     def _filter_docs_by_entities(self, docs, filter_entities):
+        return_docs = []
+
         for doc in docs:
             count = 0
 
@@ -62,9 +72,10 @@ class DocsRepository:
                 if f_ent in doc['doc']['entities']:
                     count += 1
 
-            doc['suggest'] = doc['suggest'] + (count * self.ENTITY_SUGGEST_LEVEL)
+            if len(filter_entities) == count:
+                return_docs.append(doc)
 
-        return docs
+        return return_docs
 
     def _filter_docs_by_title(self, docs, document_title):
         return_docs = []

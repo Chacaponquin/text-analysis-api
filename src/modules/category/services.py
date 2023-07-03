@@ -23,10 +23,10 @@ class CategoryServices:
         all_categories: list[dict] = []
 
         for doc in all_docs:
-            for cat in doc['categories']:
+            for cat in doc['doc']['categories']:
                 found_cat = self.found_category_by_name(all_categories, cat)
                 if found_cat is None:
-                    all_categories.append({'category': cat, 'count': 0})
+                    all_categories.append({'category': cat, 'count': 1})
                 else:
                     found_cat['count'] = found_cat['count'] + 1
 

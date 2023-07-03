@@ -29,9 +29,9 @@ class EntityServices:
         all_entities: list[dict] = []
 
         for doc in all_docs:
-            for ent in doc['entities']:
+            for ent in doc['doc']['entities']:
                 if not self.exists_entity_by_name(all_entities, ent):
-                    all_entities.append({'entity': ent, 'count': 0})
+                    all_entities.append({'entity': ent, 'count': 1})
                 else:
                     found_entity = self.found_entity_by_name(all_entities, ent)
                     found_entity['count'] = found_entity['count'] + 1
