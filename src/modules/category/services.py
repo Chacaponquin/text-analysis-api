@@ -1,6 +1,7 @@
 import difflib
 
 from src.modules.docs.services import DocsServices
+from src.modules.shared.dto import FilterDTO
 from .dto import FindCategory
 
 
@@ -18,8 +19,8 @@ class CategoryServices:
 
         return found
 
-    def get_all_categories(self):
-        all_docs = self.docs_services.get_all_docs()
+    def get_all_categories(self, doc_filter: FilterDTO | None = None):
+        all_docs = self.docs_services.get_all_docs(doc_filter)
         all_categories: list[dict] = []
 
         for doc in all_docs:

@@ -1,7 +1,8 @@
-from src.modules.docs.services import DocsServices
+import datetime
 import difflib
 
 from .dto import FindEntity
+from src.modules.docs.services import DocsServices
 from src.modules.shared.dto import FilterDTO
 
 
@@ -20,9 +21,66 @@ class EntityServices:
         return found
 
     def found_entity_by_name(self, entities, entity_name):
+        found = None
+
         for ent in entities:
             if ent['entity'] == entity_name:
-                return ent
+                found = ent
+                break
+
+        return found
+
+    def get_entities_over_time(self, docs_filter: FilterDTO | None = None):
+        all_docs = self.docs_services.get_all_docs(docs_filter)
+        all_entities: list[dict] = []
+
+        difference_years = docs_filter.year_finish - docs_filter.year_init
+
+        for doc in all_docs:
+            for ent in doc['doc']['entities']:
+                if not self.exists_entity_by_name(all_entities, ent):
+                    all_entities.append({'entity': ent, 'time_data': []})
+
+        if difference_years <= 1:
+            # months
+            months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+
+            for ent in all_entities:
+                save_entity_months_data = []
+                for m_index, month in enumerate(months):
+                    count_entity_repeat = 0
+                    month_original_index = m_index + 1
+
+                    for doc in all_docs:
+                        doc_date = datetime.datetime.strptime(doc['doc']['date'], "%Y-%m-%dT%H:%M:%SZ")
+                        doc_include_entity = ent['entity'] in doc['doc']['entities']
+
+                        if doc_date.month == month_original_index and doc_include_entity:
+                            count_entity_repeat += 1
+
+                    save_entity_months_data.append({'count': count_entity_repeat, 'unit': months[m_index]})
+
+                ent['time_data'] = save_entity_months_data
+
+        else:
+            for ent in all_entities:
+                save_entity_months_data = []
+
+                for year in range(docs_filter.year_init, docs_filter.year_finish):
+                    count_entity_repeat = 0
+
+                    for doc in all_docs:
+                        doc_date = datetime.datetime.strptime(doc['doc']['date'], "%Y-%m-%dT%H:%M:%SZ")
+                        doc_include_entity = ent['entity'] in doc['doc']['entities']
+
+                        if doc_date.year == year and doc_include_entity:
+                            count_entity_repeat += 1
+
+                    save_entity_months_data.append({'count': count_entity_repeat, 'unit': str(year)})
+
+                ent['time_data'] = save_entity_months_data
+
+        return all_entities
 
     def get_all_entities(self, docs_filter: FilterDTO | None = None) -> list[dict]:
         all_docs = self.docs_services.get_all_docs(docs_filter)
