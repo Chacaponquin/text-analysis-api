@@ -1,8 +1,7 @@
 from pydantic import BaseModel
 from typing import List
 
-
-class FindDocDTO(BaseModel):
+class FilterDTO(BaseModel):
    entities: List[str]
    categories: List[str]
    document_title: str

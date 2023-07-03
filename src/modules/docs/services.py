@@ -1,14 +1,11 @@
 from .repository import DocsRepository
-from .dto import FindDocDTO
+from src.modules.shared.dto import FilterDTO
 
 
 class DocsServices:
     def __init__(self):
         self.repository = DocsRepository()
 
-    def get_all_docs(self):
-        return self.repository.get_all_docs()
-
-    def search_similar_documents(self, params: FindDocDTO):
-        return self.repository.find_similar_documents(params)
+    def get_all_docs(self, docs_filter: FilterDTO | None = None):
+        return self.repository.get_all_docs() if docs_filter is None else self.repository.find_similar_documents(docs_filter)
 

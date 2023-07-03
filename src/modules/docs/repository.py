@@ -3,7 +3,7 @@ import difflib
 import datetime
 
 from .exceptions import FetchDocsError
-from .dto import FindDocDTO
+from src.modules.shared.dto import FilterDTO
 
 
 class DocsRepository:
@@ -22,7 +22,7 @@ class DocsRepository:
 
         return self._map_docs(res.json()['response']['docs'])
 
-    def find_similar_documents(self, params: FindDocDTO):
+    def find_similar_documents(self, params: FilterDTO):
         order_docs = self._filter_docs_by_title(self.get_all_docs(), params.document_title)
         order_docs = self._filter_docs_by_entities(order_docs, params.entities)
         order_docs = self._filter_docs_by_categories(order_docs, params.categories)

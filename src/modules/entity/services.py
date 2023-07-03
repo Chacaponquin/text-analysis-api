@@ -2,6 +2,7 @@ from src.modules.docs.services import DocsServices
 import difflib
 
 from .dto import FindEntity
+from src.modules.shared.dto import FilterDTO
 
 
 class EntityServices:
@@ -23,8 +24,8 @@ class EntityServices:
             if ent['entity'] == entity_name:
                 return ent
 
-    def get_all_entities(self) -> list[dict]:
-        all_docs = self.docs_services.get_all_docs()
+    def get_all_entities(self, docs_filter: FilterDTO | None = None) -> list[dict]:
+        all_docs = self.docs_services.get_all_docs(docs_filter)
         all_entities: list[dict] = []
 
         for doc in all_docs:
