@@ -2,13 +2,12 @@ import datetime
 import difflib
 
 from .dto import FindEntity
-from src.modules.docs.services import DocsServices
 from src.modules.shared.dto import FilterDTO
 
 
 class EntityServices:
-    def __init__(self):
-        self.docs_services = DocsServices()
+    def __init__(self, docs_services):
+        self.docs_services = docs_services
 
     def exists_entity_by_name(self, entities, entity_name):
         found = False
@@ -29,6 +28,17 @@ class EntityServices:
                 break
 
         return found
+
+    def get_entity_freq(self, filter_docs: FilterDTO, entity_name: str) -> int:
+        count = 0
+        all_docs = self.docs_services.get_all_docs(filter_docs)
+
+        for doc in all_docs:
+            for ent in doc['doc']['entities']:
+                if ent == entity_name:
+                    count += 1
+
+        return count
 
     def get_entities_over_time(self, docs_filter: FilterDTO | None = None):
         all_docs = self.docs_services.get_all_docs(docs_filter)
@@ -66,7 +76,8 @@ class EntityServices:
             for ent in all_entities:
                 save_entity_months_data = []
 
-                for year in range(docs_filter.year_init, docs_filter.year_finish):
+                step = int(difference_years / 10) if int(difference_years / 10) > 0 else 1
+                for year in range(docs_filter.year_init, docs_filter.year_finish + 1, step):
                     count_entity_repeat = 0
 
                     for doc in all_docs:

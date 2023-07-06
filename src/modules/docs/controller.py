@@ -11,7 +11,7 @@ docs_router = APIRouter()
 def get_docs():
     try:
         docs_services = DocsServices()
-        docs = docs_services.get_all_docs()
+        docs = docs_services.find_similar_documents()
         return docs
     except FetchDocsError:
         raise HTTPException(status_code=500)
@@ -20,10 +20,10 @@ def get_docs():
 
 
 @docs_router.post('/find')
-async def search_similar_documents(params: FilterDTO):
+async def search_similar_documents(filter: FilterDTO):
     try:
         docs_services = DocsServices()
-        docs = docs_services.get_all_docs(params)
+        docs = docs_services.find_similar_documents(filter)
         return docs
     except FetchDocsError:
         raise HTTPException(status_code=500)

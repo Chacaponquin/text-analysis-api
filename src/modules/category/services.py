@@ -1,13 +1,12 @@
 import difflib
 
-from src.modules.docs.services import DocsServices
 from src.modules.shared.dto import FilterDTO
 from .dto import FindCategory
 
 
 class CategoryServices:
-    def __init__(self):
-        self.docs_services = DocsServices()
+    def __init__(self, docs_services):
+        self.docs_services = docs_services
 
     def found_category_by_name(self, categories, category_name):
         found = None
@@ -18,6 +17,17 @@ class CategoryServices:
                 break
 
         return found
+
+    def get_category_freq(self, filter_docs: FilterDTO, category_name) -> int:
+        all_docs = self.docs_services.get_all_docs(filter_docs)
+        count = 0
+
+        for doc in all_docs:
+            for cat in doc['doc']['categories']:
+                if cat == category_name:
+                    count += 1
+
+        return count
 
     def get_all_categories(self, doc_filter: FilterDTO | None = None):
         all_docs = self.docs_services.get_all_docs(doc_filter)
