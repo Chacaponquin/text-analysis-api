@@ -6,9 +6,9 @@ from src.modules.docs.services import DocsServices
 
 class ReportServices:
     def __init__(self):
-        self.entity_services = EntityServices()
-        self.category_services = CategoryServices()
         self.docs_services = DocsServices()
+        self.entity_services = EntityServices(self.docs_services)
+        self.category_services = CategoryServices(self.docs_services)
 
     def get_entity_frequency_data(self, docs_filter: FilterDTO):
         all_entities = self.entity_services.get_all_entities(docs_filter)

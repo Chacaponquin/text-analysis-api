@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import List
 
+
 class FilterDTO(BaseModel):
    entities: List[str]
    categories: List[str]

@@ -19,7 +19,7 @@ class DocsServices:
 
         self.ENTITY_SUGGEST_LEVEL = 0.1
         self.CATEGORY_SUGGEST_LEVEL = 0.1
-        self.TITLE_SUGGEST_LEVEL = 3
+        self.TITLE_SUGGEST_LEVEL = 1
 
         self.SUGGEST_FIELD = 'suggest'
 
