@@ -2,6 +2,7 @@ from src.modules.entity.services import EntityServices
 from src.modules.shared.dto import FilterDTO
 from src.modules.category.services import CategoryServices
 from src.modules.docs.services import DocsServices
+from .domain import ReportEntityRelations, EntityRelation
 
 
 class ReportServices:
@@ -26,4 +27,22 @@ class ReportServices:
     def get_docs_over_time(self, docs_filter: FilterDTO):
         data = self.docs_services.get_docs_over_time(docs_filter)
         return data
+
+    def get_entities_corelation(self, docs_filter: FilterDTO, root_entity: str) -> ReportEntityRelations:
+        return_data = ReportEntityRelations(root_entity)
+        all_docs = self.docs_services.get_all_docs(docs_filter)
+
+        for doc in all_docs:
+            if root_entity in doc['doc']['entities']:
+                for ent in doc['doc']['entities']:
+                    if ent != root_entity:
+                        found_relation = return_data.check_entity_in_relations(ent)
+                        if found_relation is None:
+                            new_relation = EntityRelation(ent)
+                            return_data.relations.append(new_relation)
+                        else:
+                            found_relation.count += 1
+
+        return_data.relations.sort(reverse=True, key=lambda x: x.count)
+        return return_data
 

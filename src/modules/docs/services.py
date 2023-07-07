@@ -163,7 +163,7 @@ class DocsServices:
                 month_original_index = m_index + 1
 
                 for doc in all_docs:
-                    doc_date = datetime.datetime.strptime(doc['doc']['date'], "%Y-%m-%dT%H:%M:%SZ")
+                    doc_date = self.get_doc_year(doc['doc']['date'])
 
                     if doc_date.month == month_original_index:
                         count_docs_in_month += 1
@@ -180,7 +180,7 @@ class DocsServices:
                 count_docs_in_year = 0
 
                 for doc in all_docs:
-                    doc_date = datetime.datetime.strptime(doc['doc']['date'], "%Y-%m-%dT%H:%M:%SZ")
+                    doc_date = self.get_doc_year(doc['doc']['date'])
 
                     if doc_date.year == year:
                         count_docs_in_year += 1

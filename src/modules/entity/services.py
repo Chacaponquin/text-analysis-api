@@ -120,3 +120,5 @@ class EntityServices:
 
         entities.sort(reverse=True, key=lambda x: x['suggest'])
         return entities[:10]
+
+
