@@ -28,14 +28,23 @@ class ReportServices:
         data = self.docs_services.get_docs_over_time(docs_filter)
         return data
 
-    def get_entities_corelation(self, docs_filter: FilterDTO, root_entity: str) -> ReportEntityRelations:
-        return_data = ReportEntityRelations(root_entity)
+    def get_entities_corelation(self, docs_filter: FilterDTO, root_entities: list[str]) -> ReportEntityRelations:
+        return_report: list[ReportEntityRelations] = []
         all_docs = self.docs_services.get_all_docs(docs_filter)
+
+        for root_entity in root_entities:
+            new_relations = self._get_entity_realtions(root_entity, all_docs, return_report)
+            return_report.append(new_relations)
+
+        return return_report
+
+    def _get_entity_realtions(self, root_entity: str, all_docs, all_root_entities_relations: list[ReportEntityRelations]):
+        return_data = ReportEntityRelations(root_entity)
 
         for doc in all_docs:
             if root_entity in doc['doc']['entities']:
                 for ent in doc['doc']['entities']:
-                    if ent != root_entity:
+                    if ent != root_entity and ent not in list(map(lambda x: x.root_entity, all_root_entities_relations)):
                         found_relation = return_data.check_entity_in_relations(ent)
                         if found_relation is None:
                             new_relation = EntityRelation(ent)

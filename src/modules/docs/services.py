@@ -100,7 +100,7 @@ class DocsServices:
         for doc in docs:
             doc_date = self.get_doc_year(doc['doc']['date'])
 
-            if doc_date.year >= year_init and doc_date.year <= year_finish:
+            if year_init <= doc_date.year <= year_finish:
                 filter_docs.append(doc)
 
         return filter_docs
