@@ -86,6 +86,7 @@ class DocsServices:
             for ent in doc['doc']['entities']:
                 if ent not in list(map(lambda x: x.entity, return_entities)):
                     freq_entity = self.entity_services.get_entity_freq(filter_docs, ent)
+
                     save_entity = DocEntity(ent, freq_entity)
                     return_entities.append(save_entity)
 
@@ -105,7 +106,7 @@ class DocsServices:
 
         return filter_docs
 
-    def _filter_docs_by_categories(self, docs, filter_categories):
+    def _filter_docs_by_categories(self, docs, filter_categories: list[str]):
         return_docs = []
 
         for doc in docs:
@@ -117,12 +118,12 @@ class DocsServices:
 
             doc[self.SUGGEST_FIELD] += (count * self.CATEGORY_SUGGEST_LEVEL)
 
-            if count == len(filter_categories):
+            if count > 0 or len(filter_categories) == 0:
                 return_docs.append(doc)
 
         return return_docs
 
-    def _filter_docs_by_entities(self, docs, filter_entities):
+    def _filter_docs_by_entities(self, docs, filter_entities: list[str]):
         return_docs = []
 
         for doc in docs:
@@ -134,7 +135,7 @@ class DocsServices:
 
             doc[self.SUGGEST_FIELD] += (count * self.ENTITY_SUGGEST_LEVEL)
 
-            if len(filter_entities) == count:
+            if count > 0 or len(filter_entities) == 0:
                 return_docs.append(doc)
 
         return return_docs
